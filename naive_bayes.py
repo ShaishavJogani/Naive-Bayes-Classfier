@@ -9,7 +9,7 @@ dataset can be also found on that web-page.
 
 The Implementation and some of it's functions are taken from this website (https://machinelearningmastery.com/naive-bayes-classifier-scratch-python/)
 
-Author: Shaishav Jogani
+Author: Shaishav Jogani (https://www.linkedin.com/in/shaishavjogani/)
 """
 
 import numpy as np
