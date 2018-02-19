@@ -1,7 +1,6 @@
 """
 Implementation of Gaussian Naive Bayes Classification.
-
-The code is written from scratch and does NOT use any existing functions or packages which can provide the Naive Bayes
+The code is written from scratch and does NOT use existing functions or packages which can provide the Naive Bayes
 Classifier class or fit/predict function (e.g. sklearn).
 
 I use Bank note authentication dataset, which can be downloaded from
@@ -19,8 +18,8 @@ import csv
 import math
 
 
-# Load a CSV file
 def load_csv_dataset(filename):
+    """Load the CSV file"""
     lines = csv.reader(open(filename, 'rb'))
     dataset = list(lines)
     for i in range(len(dataset)):
@@ -29,19 +28,22 @@ def load_csv_dataset(filename):
 
 
 def mean(numbers):
+    """Returns the mean of numbers"""
     return np.mean(numbers)
 
 
 def stdev(numbers):
+    """Returns the std_deviation of numbers"""
     return np.std(numbers)
 
 
 def sigmoid(z):
+    """Returns the sigmoid number"""
     return 1.0 / (1.0 + math.exp(-z))
 
 
-# Split a dataset into k folds
 def cross_validation_split(dataset, n_folds):
+    """Split dataset into the k folds. Returns the list of k folds"""
     dataset_split = list()
     dataset_copy = list(dataset)
     fold_size = int(len(dataset) / n_folds)
@@ -54,8 +56,8 @@ def cross_validation_split(dataset, n_folds):
     return dataset_split
 
 
-# Calculate accuracy percentage
 def accuracy_metric(actual, predicted):
+    """Calculate accuracy percentage"""
     correct = 0
     for i in range(len(actual)):
         if actual[i] == predicted[i]:
@@ -63,10 +65,9 @@ def accuracy_metric(actual, predicted):
     return correct / float(len(actual)) * 100.0
 
 
-# Evaluate an algorithm using a cross validation split
 def evaluate_algorithm(dataset, algorithm, n_folds, ):
+    """Evaluate an algorithm using a cross validation split"""
     folds = cross_validation_split(dataset, n_folds)
-
     scores = list()
     for fold in folds:
         train_set = list(folds)
@@ -89,17 +90,10 @@ def evaluate_algorithm(dataset, algorithm, n_folds, ):
 ######## Naive Bayes  #######
 #############################
 #############################
-def split_dataset(dataset, ratio):
-    trainSize = int(len(dataset) * ratio)
-    trainSet = []
-    testSet = list(dataset)
-    while len(trainSet) < trainSize:
-        index = np.random.randint(0, high=len(testSet))
-        trainSet.append(testSet.pop(index))
-    return trainSet
 
 
 def separate_by_class(dataset):
+    """Split training set by class value"""
     separated = {}
     for i in range(len(dataset)):
         row = dataset[i]
@@ -110,12 +104,14 @@ def separate_by_class(dataset):
 
 
 def model(dataset):
+    """Find the mean and standard deviation of each feature in dataset"""
     models = [(mean(attribute), stdev(attribute)) for attribute in zip(*dataset)]
-    models.pop()
+    models.pop() #Remove last entry because it is class value.
     return models
 
 
 def model_by_class(dataset):
+    """find the mean and standard deviation of each feature in dataset by their class"""
     separated = separate_by_class(dataset)
     class_models = {}
     for (classValue, instances) in separated.iteritems():
@@ -124,14 +120,15 @@ def model_by_class(dataset):
 
 
 def calculate_pdf(x, mean, stdev):
+    """Calculate probability using gaussian density function"""
     if stdev == 0.0:
-        # print (x, mean, stdev, 2 * math.pow(stdev, 2))
         return 1.0
     exponent = math.exp(-(math.pow(x - mean, 2) / (2 * math.pow(stdev, 2))))
     return 1 / (math.sqrt(2 * math.pi) * stdev) * exponent
 
 
 def calculate_class_probabilities(models, input):
+    """Calculate the class probability for input sample. Combine probability of each feature"""
     probabilities = {}
     for (classValue, classModels) in models.iteritems():
         probabilities[classValue] = 1
@@ -143,6 +140,7 @@ def calculate_class_probabilities(models, input):
 
 
 def predict(models, inputVector):
+    """Compare probability for each class. Return the class label which has max probability."""
     probabilities = calculate_class_probabilities(models, inputVector)
     (bestLabel, bestProb) = (None, -1)
     for (classValue, probability) in probabilities.iteritems():
@@ -153,6 +151,7 @@ def predict(models, inputVector):
 
 
 def getPredictions(models, testSet):
+    """Get class label for each value in test set."""
     predictions = []
     for i in range(len(testSet)):
         result = predict(models, testSet[i])
@@ -161,6 +160,7 @@ def getPredictions(models, testSet):
 
 
 def naive_bayes(train, test, ):
+    """Create a naive bayes model. Then test the model and returns the testing result."""
     summaries = model_by_class(train)
     predictions = getPredictions(summaries, test)
     return predictions
