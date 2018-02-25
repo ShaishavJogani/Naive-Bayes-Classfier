@@ -122,7 +122,10 @@ def model_by_class(dataset):
 def calculate_pdf(x, mean, stdev):
     """Calculate probability using gaussian density function"""
     if stdev == 0.0:
-        return 1.0
+        if x == mean:
+            return 1.0
+        else:
+            return 0.0
     exponent = math.exp(-(math.pow(x - mean, 2) / (2 * math.pow(stdev, 2))))
     return 1 / (math.sqrt(2 * math.pi) * stdev) * exponent
 
